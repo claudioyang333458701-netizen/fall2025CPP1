@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     Collider2D col;
     SpriteRenderer sr;
+    Animator anim;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         sr = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
 
 
         groundLayer = LayerMask.GetMask("Ground");
@@ -46,9 +48,12 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer);
 
+
+
         //grab our horizontal input value - negative button is moving to the left (A/Left Arrow), positive button is moving to the right (D/Right Arrow) - cross platform compatible so it works with keyboard, joystick, etc. -1 to 1 range where zero means no input
         float hValue = Input.GetAxis("Horizontal");
 
+        //flip the sprite based on movement direction
         SpriteFlip(hValue);
 
         //set the rigidbody's horizontal velocity based on the input value multiplied by our speed - vertical velocity remains unchanged
@@ -59,10 +64,15 @@ public class PlayerController : MonoBehaviour
             //apply an upward force to the rigidbody when the jump button is pressed
             rb.AddForce(Vector2.up * 10f, ForceMode2D.Impulse);
         }
+
+        //update animator parameters
+        anim.setfloat ("hValue", Mathf.Abs(hValue));
+        anim.setbool  ("isGrounded", isGrounded);
     }
 
     private void SpriteFlip(float hValue)
     {
+        //flip the sprite based on movement direction
         if (hValue != 0)
             sr.flipX = (hValue < 0);
     }
