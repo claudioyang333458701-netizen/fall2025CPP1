@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using UnityEngine;
 
 //This will be attached to the player gameobject to control its movement
@@ -8,6 +9,9 @@ public class PlayerController : MonoBehaviour
     public float speed = 10f;
     public float groundCheckRadius = 0.02f;
     private bool isGrounded = false;
+    private bool isFiring = false;
+    private float hValue = 0f;
+    private bool canMove = true;
     private Vector2 groundCheckPos => new Vector2(col.bounds.center.x, col.bounds.min.y);
 
     //layer mask to identify what is ground
@@ -48,21 +52,42 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer);
 
+        isFiring = false;
 
-
-        //grab our horizontal input value - negative button is moving to the left (A/Left Arrow), positive button is moving to the right (D/Right Arrow) - cross platform compatible so it works with keyboard, joystick, etc. -1 to 1 range where zero means no input
-        float hValue = Input.GetAxis("Horizontal");
-
-        //flip the sprite based on movement direction
-        SpriteFlip(hValue);
-
-        //set the rigidbody's horizontal velocity based on the input value multiplied by our speed - vertical velocity remains unchanged
-        rb.linearVelocityX = hValue * speed;
+        if (canMove)
+        {
+            isFiring = false;
+            Moving();
+        }
+        else
+        {
+            rb.linearVelocityX = 0;
+        }
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             //apply an upward force to the rigidbody when the jump button is pressed
             rb.AddForce(Vector2.up * 10f, ForceMode2D.Impulse);
+        }
+
+        if (Input.GetButtonDown("Fire") && isGrounded)
+        {
+            isFiring = true;
+            //rb.linearVelocity = Vector2.zero;
+            if (isFiring)
+            {
+                canMove = false;
+                speed = 0; // This is stoping the player movement when firing
+                Debug.Log("Fire");
+                rb.linearVelocityX = 0; // Set horizontal velocity to zero when firing
+                //Debug.Log("Velocity X after stop: " + rb.linearVelocity.x);
+                //Fire();  //This is the shooting function
+                anim.StopPlayback(); // Stop any current animation playback
+            }
+
+            isFiring = false;
+            speed = 10f;
+
         }
 
         //update animator parameters
@@ -75,5 +100,18 @@ public class PlayerController : MonoBehaviour
         //flip the sprite based on movement direction
         if (hValue != 0)
             sr.flipX = (hValue < 0);
+    }
+
+    private void Moving()
+    {
+        //grab our horizontal input value - negative button is moving to the left (A/Left Arrow), positive button is moving to the right (D/Right Arrow) - cross platform compatible so it works with keyboard, joystick, etc. -1 to 1 range where zero means no input
+        hValue = Input.GetAxis("Horizontal");
+
+        //flip the sprite based on movement direction
+        SpriteFlip(hValue);
+
+        //set the rigidbody's horizontal velocity based on the input value multiplied by our speed - vertical velocity remains unchanged
+        rb.linearVelocityX = hValue * speed;
+        Debug.Log("Velocity X: " + rb.linearVelocity.x);
     }
 }
