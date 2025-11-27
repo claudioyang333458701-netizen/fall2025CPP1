@@ -66,8 +66,8 @@ public class PlayerController : MonoBehaviour
         }
 
         //update animator parameters
-        anim.setfloat ("hValue", Mathf.Abs(hValue));
-        anim.setbool  ("isGrounded", isGrounded);
+        anim.SetFloat ("hValue", Mathf.Abs(hValue));
+        anim.SetBool  ("isGrounded", isGrounded);
     }
 
     private void SpriteFlip(float hValue)
