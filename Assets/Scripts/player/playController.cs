@@ -1,4 +1,5 @@
 using Mono.Cecil;
+using System;
 using UnityEngine;
 
 //This will be attached to the player gameobject to control its movement
@@ -52,11 +53,8 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer);
 
-        isFiring = false;
-
         if (canMove)
         {
-            isFiring = false;
             Moving();
         }
         else
@@ -70,27 +68,23 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.up * 10f, ForceMode2D.Impulse);
         }
 
-        if (Input.GetButtonDown("Fire") && isGrounded)
+        if (Input.GetButtonDown("fire") && isGrounded)
         {
             isFiring = true;
-            //rb.linearVelocity = Vector2.zero;
-            if (isFiring)
-            {
-                canMove = false;
-                speed = 0; // This is stoping the player movement when firing
-                Debug.Log("Fire");
-                rb.linearVelocityX = 0; // Set horizontal velocity to zero when firing
-                //Debug.Log("Velocity X after stop: " + rb.linearVelocity.x);
-                //Fire();  //This is the shooting function
-                anim.StopPlayback(); // Stop any current animation playback
-            }
+            hValue = 0;
+            canMove = false;
+            Debug.Log("Firing!");
+        }
 
+        if (Input.GetButtonUp("fire"))
+        {
             isFiring = false;
-            speed = 10f;
-
+            canMove = true;
+            Debug.Log("Stopped Firing!");
         }
 
         //update animator parameters
+        anim.SetBool  ("Attack", isFiring);
         anim.SetFloat ("hValue", Mathf.Abs(hValue));
         anim.SetBool  ("isGrounded", isGrounded);
     }
