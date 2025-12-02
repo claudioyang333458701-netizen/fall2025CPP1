@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     private bool isFiring = false;
     private float hValue = 0f;
     private bool canMove = true;
+    private bool victory = false;
+
     private Vector2 groundCheckPos => new Vector2(col.bounds.center.x, col.bounds.min.y);
 
     //layer mask to identify what is ground
@@ -68,25 +70,39 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.up * 10f, ForceMode2D.Impulse);
         }
 
+        //hold press e and jump to emote
+        if (Input.GetKeyDown(KeyCode.E) && Input.GetButton("Jump"))
+        {
+            victory = true;
+        }
+
+        else if (Input.GetKeyUp(KeyCode.E) || Input.GetButtonUp("Jump"))
+        {
+            victory = false;
+        }
+
         if (Input.GetButtonDown("fire") && isGrounded)
         {
             isFiring = true;
-            hValue = 0;
-            canMove = false;
             Debug.Log("Firing!");
+            canMove = false;
+            hValue = 0f;
         }
+
 
         if (Input.GetButtonUp("fire"))
         {
             isFiring = false;
-            canMove = true;
             Debug.Log("Stopped Firing!");
+            canMove = true;
         }
 
         //update animator parameters
         anim.SetBool  ("Attack", isFiring);
         anim.SetFloat ("hValue", Mathf.Abs(hValue));
         anim.SetBool  ("isGrounded", isGrounded);
+        anim.SetBool  ("isMoving", canMove);
+        anim.SetBool  ("Victory", victory);
     }
 
     private void SpriteFlip(float hValue)

@@ -645,7 +645,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Sprite_Mario_16
+      name: MarioVictory
       rect:
         serializedVersion: 2
         x: 306
@@ -1660,6 +1660,7 @@ TextureImporter:
       MarioFireBall_5: 2070263079612885921
       MarioIdle: 4638078165498462608
       MarioJump: -5672653749854861051
+      MarioVictory: -9218963548213284818
       MarioWalk1: 7535359878243092818
       MarioWalk2: -3905991941800648080
       MarioWalk3: 1554904934580016266
@@ -1670,7 +1671,6 @@ TextureImporter:
       Sprite_Mario_13: -7156801889515416839
       Sprite_Mario_14: 7980998295276442
       Sprite_Mario_15: 5708472064614676027
-      Sprite_Mario_16: -9218963548213284818
       Sprite_Mario_17: -8647316737487248356
       Sprite_Mario_18: 4567098361401889599
       Sprite_Mario_19: 7479211179968422096
