@@ -1,5 +1,3 @@
-using Mono.Cecil;
-using System;
 using UnityEngine;
 
 //This will be attached to the player gameobject to control its movement
@@ -17,8 +15,6 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 groundCheckPos => new Vector2(col.bounds.center.x, col.bounds.min.y);
 
-    //layer mask to identify what is ground
-    private LayerMask groundLayer;
 
     //Component references
     //public Transform groundCheck;
@@ -26,7 +22,7 @@ public class PlayerController : MonoBehaviour
     Collider2D col;
     SpriteRenderer sr;
     Animator anim;
-
+    GroundCheck groundCheck;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,8 +33,8 @@ public class PlayerController : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
 
+        groundCheck = new GroundCheck(col, LayerMask.GetMask("Ground"), groundCheckRadius); 
 
-        groundLayer = LayerMask.GetMask("Ground");
 
         //Transform based ground check setup - using an empty gameobject as a child of the player to define the ground check position
         //initalize ground check poositon using separate gameobject as a child of the player
@@ -53,7 +49,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheckPos, groundCheckRadius, groundLayer);
+        isGrounded = groundCheck.CheckIsGrounded();
 
         if (canMove)
         {
@@ -105,6 +101,8 @@ public class PlayerController : MonoBehaviour
         anim.SetBool  ("Victory", victory);
     }
 
+    private void OnValidate() => groundCheck?.UpdateGroundCheckRadius(groundCheckRadius);
+        
     private void SpriteFlip(float hValue)
     {
         //flip the sprite based on movement direction
