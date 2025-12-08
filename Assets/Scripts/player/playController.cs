@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     //a speed value that will control how fast the player moves horizontally
     public float speed = 10f;
     public float groundCheckRadius = 0.02f;
+
     private bool isGrounded = false;
     private bool isFiring = false;
     private float hValue = 0f;
