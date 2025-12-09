@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(SpriteRenderer))]
+[RequireComponent(typeof(Animator))]
+
 //This will be attached to the player gameobject to control its movement
 public class PlayerController : MonoBehaviour
 {

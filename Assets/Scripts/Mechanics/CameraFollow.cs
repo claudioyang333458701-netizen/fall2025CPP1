@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class CameraFollow : MonoBehaviour
 {
 
-    [SerializeField] private float minXPos = -4.5f;
-    [SerializeField] private float maxXPos = 233.3f;
+    [SerializeField] private float minXPos = 1.08f;
+    [SerializeField] private float maxXPos = 233.1f;
 
     [SerializeField] private Transform target;
 
