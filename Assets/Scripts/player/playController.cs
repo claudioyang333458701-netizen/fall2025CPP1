@@ -11,14 +11,7 @@ public class PlayerController : MonoBehaviour
     //a speed value that will control how fast the player moves horizontally
     public float speed = 10f;
     public float groundCheckRadius = 0.02f;
-
     private bool isGrounded = false;
-    private bool isFiring = false;
-    private float hValue = 0f;
-    private bool canMove = true;
-    private bool victory = false;
-
-    private Vector2 groundCheckPos => new Vector2(col.bounds.center.x, col.bounds.min.y);
 
 
     //Component references
@@ -56,14 +49,16 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = groundCheck.CheckIsGrounded();
 
-        if (canMove)
-        {
-            Moving();
-        }
-        else
-        {
-            rb.linearVelocityX = 0;
-        }
+        float hValue = Input.GetAxis("Horizontal");
+        float vValue = Input.GetAxisRaw("Vertical");
+
+        SpriteFlip(hValue);
+
+
+        rb.linearVelocityX = hValue * speed;
+        Debug.Log("Velocity X: " + rb.linearVelocity.x);
+
+
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -71,39 +66,12 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(Vector2.up * 10f, ForceMode2D.Impulse);
         }
 
-        //hold press e and jump to emote
-        if (Input.GetKeyDown(KeyCode.E) && Input.GetButton("Jump"))
-        {
-            victory = true;
-        }
 
-        else if (Input.GetKeyUp(KeyCode.E) || Input.GetButtonUp("Jump"))
-        {
-            victory = false;
-        }
-
-        if (Input.GetButtonDown("fire") && isGrounded)
-        {
-            isFiring = true;
-            Debug.Log("Firing!");
-            canMove = false;
-            hValue = 0f;
-        }
-
-
-        if (Input.GetButtonUp("fire"))
-        {
-            isFiring = false;
-            Debug.Log("Stopped Firing!");
-            canMove = true;
-        }
 
         //update animator parameters
-        anim.SetBool  ("Attack", isFiring);
         anim.SetFloat ("hValue", Mathf.Abs(hValue));
         anim.SetBool  ("isGrounded", isGrounded);
-        anim.SetBool  ("isMoving", canMove);
-        anim.SetBool  ("Victory", victory);
+
     }
 
     private void OnValidate() => groundCheck?.UpdateGroundCheckRadius(groundCheckRadius);
@@ -115,16 +83,4 @@ public class PlayerController : MonoBehaviour
             sr.flipX = (hValue < 0);
     }
 
-    private void Moving()
-    {
-        //grab our horizontal input value - negative button is moving to the left (A/Left Arrow), positive button is moving to the right (D/Right Arrow) - cross platform compatible so it works with keyboard, joystick, etc. -1 to 1 range where zero means no input
-        hValue = Input.GetAxis("Horizontal");
-
-        //flip the sprite based on movement direction
-        SpriteFlip(hValue);
-
-        //set the rigidbody's horizontal velocity based on the input value multiplied by our speed - vertical velocity remains unchanged
-        rb.linearVelocityX = hValue * speed;
-        Debug.Log("Velocity X: " + rb.linearVelocity.x);
-    }
 }
